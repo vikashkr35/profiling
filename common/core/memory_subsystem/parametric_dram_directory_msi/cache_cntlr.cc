@@ -248,7 +248,11 @@ CacheCntlr::CacheCntlr(MemComponent::component_t mem_component,
    registerStatsMetric(name, core_id, "demand-store-misses-prop", &stats.demand_store_misses_prop);
    registerStatsMetric(name, core_id, "mshr-struc-latency", &stats.mshr_struc_latency);
    registerStatsMetric(name, core_id, "mshr-prop-latency", &stats.mshr_prop_latency);
-
+   registerStatsMetric(name, core_id, "Corresponding-prop-hit-L1", &stats.Corresponding_prop_hit_L1);
+   registerStatsMetric(name, core_id, "Corresponding-prop-hit-L2", &stats.Corresponding_prop_hit_L2);
+   registerStatsMetric(name, core_id, "Corresponding-prop-hit-L3", &stats.Corresponding_prop_hit_L3);
+   registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-hit-L3", &stats.edge_L1hit_corresponding_prop_hit_L1);
+   registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-hit-L3", &stats.edge_L1miss_corresponding_prop_hit_L1);
    
 
 
@@ -660,7 +664,83 @@ MYLOG("access done");
       else
          stats.loads_where[hit_where]++;
       
-      
+      //..............................................vikash added ................................................................... 
+      //.....................................................2 table for edge_L1hit_corresponding_prop_address_list , edge_L1miss_corresponding_prop_address_list
+      if (struc){
+         if(hit_where == HitWhere::where_t::L1_OWN) {   //L1 hit
+            //IntPtr STRUC_ENTRY_SIZE = 4; // in bytes
+            IntPtr PROP_ENTRY_SIZE = 4;  // in bytes
+          //  uint64_t kBitsPerWord = 64;  //for applications other than BFS
+
+         UInt32 *addrp = (UInt32 *)(ca_address);
+         UInt32 struct_value = *addrp; 
+         //IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value/ kBitsPerWord) * PROP_ENTRY_SIZE);
+         IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value) * PROP_ENTRY_SIZE);
+         bool found = false;
+         for (UInt32 j = 0; j < edge_L1hit_prop_address_list.size(); j++)
+         {
+            if (new_add == edge_L1hit_prop_address_list[j])
+            {
+               found = true;
+               break;
+            }
+         }
+         if (!found)
+         {
+            edge_L1hit_prop_address_list.push_back(new_add);
+         }
+         }
+         else{
+            //IntPtr STRUC_ENTRY_SIZE = 4; // in bytes
+            IntPtr PROP_ENTRY_SIZE = 4;  // in bytes
+            //uint64_t kBitsPerWord = 64;  //for applications other than BFS
+
+            UInt32 *addrp = (UInt32 *)(ca_address);
+            UInt32 struct_value = *addrp; 
+            //IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value/ kBitsPerWord) * PROP_ENTRY_SIZE);
+            IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value) * PROP_ENTRY_SIZE);
+            bool found = false;
+            for (UInt32 j = 0; j < edge_L1miss_prop_address_list.size(); j++)
+            {
+               if (new_add == edge_L1miss_prop_address_list[j])
+               {
+                  found = true;
+                  break;
+               }
+            }
+            if (!found)
+            {
+               edge_L1miss_prop_address_list.push_back(new_add);
+            }
+         }
+      }
+//.......................................... for property data access, update the required counter ...........................................
+         
+      else {
+            if (prop){
+               if (hit_where == HitWhere::where_t::L1_OWN)             //prop data hit in L1
+               {
+                for (UInt32 j = 0; j < edge_L1hit_prop_address_list.size(); j++)   // we have to check in corresponding table
+                {
+                   if ( ca_address == edge_L1hit_prop_address_list[j])
+                   {
+                     stats.edge_L1hit_corresponding_prop_hit_L1++;
+                    // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
+                     edge_L1hit_prop_address_list[j] = 0;
+                   }
+                }
+                for (UInt32 j = 0; j < edge_L1miss_prop_address_list.size(); j++)   // we have to check in corresponding table
+                {
+                   if ( ca_address == edge_L1miss_prop_address_list[j])
+                   {
+                     stats.edge_L1miss_corresponding_prop_hit_L1++;
+                     edge_L1miss_prop_address_list[j] = 0;
+                   }
+                }
+               }
+
+            }
+         }
       
 
 

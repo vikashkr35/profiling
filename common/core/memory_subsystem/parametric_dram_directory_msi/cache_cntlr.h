@@ -265,14 +265,22 @@ namespace ParametricDramDirectoryMSI
            UInt64 demand_stores_struc_misses_state[CacheState::NUM_CSTATE_STATES], demand_stores_prop_misses_state[CacheState::NUM_CSTATE_STATES];
            SubsecondTime mshr_prop_latency;
            SubsecondTime mshr_struc_latency;
-      
+           UInt64 Corresponding_prop_hit_L1;
+           UInt64 Corresponding_prop_hit_L2;
+           UInt64 Corresponding_prop_hit_L3;
+           UInt64 edge_L1hit_corresponding_prop_hit_L1;
+           UInt64 edge_L1miss_corresponding_prop_hit_L1;
 
 
            //..............................................................................
            //.................... neelam: CHANGE!!! for extra statistics to check the correct working ........
            UInt64 num_struc_dram_time_add1;
            UInt64 num_struc_dram_time_add2;
-        
+           //.................................................................................................
+           //....................................Vikash: counters.............................................
+           UInt64 num_corresponding_prop_hit_L1;
+           UInt64 num_corresponding_prop_hit_L2;
+           UInt64 num_corresponding_prop_hit_L3;
            #ifdef ENABLE_TRANSITIONS
            UInt64 transitions[CacheState::NUM_CSTATE_SPECIAL_STATES][CacheState::NUM_CSTATE_SPECIAL_STATES];
            UInt64 transition_reasons[Transition::NUM_REASONS][CacheState::NUM_CSTATE_SPECIAL_STATES][CacheState::NUM_CSTATE_SPECIAL_STATES];
