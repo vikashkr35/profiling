@@ -676,10 +676,12 @@ MYLOG("access done");
          UInt32 struct_value = *addrp; 
          //IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value/ kBitsPerWord) * PROP_ENTRY_SIZE);
          IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value) * PROP_ENTRY_SIZE);
+         assert(getMemoryManager()->isPropertyCacheline(new_add));
+         IntPtr aligned_addr = new_add - (new_add % m_cache_block_size);
          bool found = false;
          for (UInt32 j = 0; j < edge_L1hit_prop_address_list.size(); j++)
          {
-            if (new_add == edge_L1hit_prop_address_list[j])
+            if (aligned_addr == edge_L1hit_prop_address_list[j])
             {
                found = true;
                break;
@@ -687,7 +689,7 @@ MYLOG("access done");
          }
          if (!found)
          {
-            edge_L1hit_prop_address_list.push_back(new_add);
+            edge_L1hit_prop_address_list.push_back(aligned_addr);
          }
          }
          else{
@@ -699,10 +701,12 @@ MYLOG("access done");
             UInt32 struct_value = *addrp; 
             //IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value/ kBitsPerWord) * PROP_ENTRY_SIZE);
             IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value) * PROP_ENTRY_SIZE);
+            assert(getMemoryManager()->isPropertyCacheline(new_add));
+            IntPtr aligned_addr = new_add - (new_add % m_cache_block_size);
             bool found = false;
             for (UInt32 j = 0; j < edge_L1miss_prop_address_list.size(); j++)
             {
-               if (new_add == edge_L1miss_prop_address_list[j])
+               if (aligned_addr == edge_L1miss_prop_address_list[j])
                {
                   found = true;
                   break;
@@ -710,7 +714,7 @@ MYLOG("access done");
             }
             if (!found)
             {
-               edge_L1miss_prop_address_list.push_back(new_add);
+               edge_L1miss_prop_address_list.push_back(aligned_addr);
             }
          }
       }
@@ -727,6 +731,7 @@ MYLOG("access done");
                      stats.edge_L1hit_corresponding_prop_hit_L1++;
                     // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
                      edge_L1hit_prop_address_list[j] = 0;
+                     break;
                    }
                 }
                 for (UInt32 j = 0; j < edge_L1miss_prop_address_list.size(); j++)   // we have to check in corresponding table
@@ -735,6 +740,7 @@ MYLOG("access done");
                    {
                      stats.edge_L1miss_corresponding_prop_hit_L1++;
                      edge_L1miss_prop_address_list[j] = 0;
+                     break;
                    }
                 }
                }
