@@ -119,6 +119,45 @@ Cache::accessSingleLine(IntPtr addr, access_t access_type,
    return cache_block_info;
 }
 
+CacheBlockInfo*
+Cache::accessSingleLine_(IntPtr addr, access_t access_type,
+      Byte* buff, UInt32 bytes, SubsecondTime now, bool update_replacement, bool isStruc)   //.... neelam: CHANGE!!! added isStruc ......
+{
+   //assert((buff == NULL) == (bytes == 0));
+
+   IntPtr tag;
+   UInt32 set_index;
+   UInt32 line_index = -1;
+   UInt32 block_offset;
+
+   splitAddress(addr, tag, set_index, block_offset);
+
+   CacheSet* set = m_sets[set_index];
+   CacheBlockInfo* cache_block_info = set->find(tag, &line_index);
+
+   if (cache_block_info == NULL)
+      return NULL;
+
+   if (access_type == LOAD)
+   {
+      // NOTE: assumes error occurs in memory. If we want to model bus errors, insert the error into buff instead
+      if (m_fault_injector)
+         m_fault_injector->preRead(addr, set_index * m_associativity + line_index, bytes, (Byte*)m_sets[set_index]->getDataPtr(line_index, block_offset), now);
+
+      set->read_line(line_index, block_offset, buff, bytes, update_replacement, isStruc);  //.... neelam: CHANGE!!! added isStruc ......
+   }
+   else
+   {
+      set->write_line(line_index, block_offset, buff, bytes, update_replacement, isStruc);  //.... neelam: CHANGE!!! added isStruc ......
+
+      // NOTE: assumes error occurs in memory. If we want to model bus errors, insert the error into buff instead
+      if (m_fault_injector)
+         m_fault_injector->postWrite(addr, set_index * m_associativity + line_index, bytes, (Byte*)m_sets[set_index]->getDataPtr(line_index, block_offset), now);
+   }
+
+   return cache_block_info;
+}
+
 void
 Cache::insertSingleLine(IntPtr addr, Byte* fill_buff,
       bool* eviction, IntPtr* evict_addr,
