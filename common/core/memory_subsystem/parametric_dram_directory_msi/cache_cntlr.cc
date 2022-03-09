@@ -724,6 +724,7 @@ MYLOG("access done");
             if (prop){
                if (hit_where == HitWhere::where_t::L1_OWN)             //prop data hit in L1
                {
+                  /*
                 for (UInt32 j = 0; j < edge_L1hit_prop_address_list.size(); j++)   // we have to check in corresponding table
                 {
                    if ( ca_address == edge_L1hit_prop_address_list[j])

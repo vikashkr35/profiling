@@ -120,7 +120,7 @@ Cache::accessSingleLine(IntPtr addr, access_t access_type,
 }
 
 CacheBlockInfo*
-Cache::accessSingleLine_(IntPtr addr, access_t access_type,
+Cache::accessSingleLine_to_check_hit(IntPtr addr, access_t access_type,
       Byte* buff, UInt32 bytes, SubsecondTime now, bool update_replacement, bool isStruc)   //.... neelam: CHANGE!!! added isStruc ......
 {
    //assert((buff == NULL) == (bytes == 0));
@@ -137,7 +137,7 @@ Cache::accessSingleLine_(IntPtr addr, access_t access_type,
 
    if (cache_block_info == NULL)
       return NULL;
-
+   /* 
    if (access_type == LOAD)
    {
       // NOTE: assumes error occurs in memory. If we want to model bus errors, insert the error into buff instead
@@ -154,7 +154,7 @@ Cache::accessSingleLine_(IntPtr addr, access_t access_type,
       if (m_fault_injector)
          m_fault_injector->postWrite(addr, set_index * m_associativity + line_index, bytes, (Byte*)m_sets[set_index]->getDataPtr(line_index, block_offset), now);
    }
-
+   */
    return cache_block_info;
 }
 
