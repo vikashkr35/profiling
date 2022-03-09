@@ -678,6 +678,15 @@ MYLOG("access done");
          IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value) * PROP_ENTRY_SIZE);
          assert(getMemoryManager()->isPropertyCacheline(new_add));
          IntPtr aligned_addr = new_add - (new_add % m_cache_block_size);
+         bool update_replacement;
+         bool isStruc;
+         if(m_master->m_cache->accessSingleLine_to_check_hit(aligned_addr, Cache::LOAD, data_buf, data_length,
+                                             getShmemPerfModel()->getElapsedTime(ShmemPerfModel::_USER_THREAD), update_replacement, isStruc) != NULL){
+         stats.edge_L1hit_corresponding_prop_hit_L1++;                                       
+                                             }
+
+
+         /* 
          bool found = false;
          for (UInt32 j = 0; j < edge_L1hit_prop_address_list.size(); j++)
          {
@@ -691,8 +700,11 @@ MYLOG("access done");
          {
             edge_L1hit_prop_address_list.push_back(aligned_addr);
          }
+         */
          }
          else{
+         
+
             //IntPtr STRUC_ENTRY_SIZE = 4; // in bytes
             IntPtr PROP_ENTRY_SIZE = 4;  // in bytes
             //uint64_t kBitsPerWord = 64;  //for applications other than BFS
@@ -703,6 +715,13 @@ MYLOG("access done");
             IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value) * PROP_ENTRY_SIZE);
             assert(getMemoryManager()->isPropertyCacheline(new_add));
             IntPtr aligned_addr = new_add - (new_add % m_cache_block_size);
+            bool update_replacement;
+            bool isStruc;
+            if(m_master->m_cache->accessSingleLine_to_check_hit(aligned_addr, Cache::LOAD, data_buf, data_length,
+                                             getShmemPerfModel()->getElapsedTime(ShmemPerfModel::_USER_THREAD), update_replacement, isStruc) != NULL){
+            stats.edge_L1miss_corresponding_prop_hit_L1++;                                       
+                                             }
+            /*
             bool found = false;
             for (UInt32 j = 0; j < edge_L1miss_prop_address_list.size(); j++)
             {
@@ -716,15 +735,16 @@ MYLOG("access done");
             {
                edge_L1miss_prop_address_list.push_back(aligned_addr);
             }
+            */
          }
       }
 //.......................................... for property data access, update the required counter ...........................................
-         
+       /*  
       else {
             if (prop){
                if (hit_where == HitWhere::where_t::L1_OWN)             //prop data hit in L1
                {
-                  /*
+               
                 for (UInt32 j = 0; j < edge_L1hit_prop_address_list.size(); j++)   // we have to check in corresponding table
                 {
                    if ( ca_address == edge_L1hit_prop_address_list[j])
@@ -748,6 +768,7 @@ MYLOG("access done");
 
             }
          }
+         */
       
 
 
