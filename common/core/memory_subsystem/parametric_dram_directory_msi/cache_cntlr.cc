@@ -251,8 +251,12 @@ CacheCntlr::CacheCntlr(MemComponent::component_t mem_component,
    registerStatsMetric(name, core_id, "Corresponding-prop-hit-L1", &stats.Corresponding_prop_hit_L1);
    registerStatsMetric(name, core_id, "Corresponding-prop-hit-L2", &stats.Corresponding_prop_hit_L2);
    registerStatsMetric(name, core_id, "Corresponding-prop-hit-L3", &stats.Corresponding_prop_hit_L3);
-   registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-hit-L3", &stats.edge_L1hit_corresponding_prop_hit_L1);
-   registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-hit-L3", &stats.edge_L1miss_corresponding_prop_hit_L1);
+   registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-hit-L1", &stats.edge_L1hit_corresponding_prop_hit_L1);
+   registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-miss-L1", &stats.edge_L1hit_corresponding_prop_miss_L1);
+   registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-hit-L1", &stats.edge_L1miss_corresponding_prop_hit_L1);
+   registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-miss-L1", &stats.edge_L1miss_corresponding_prop_miss_L1);
+   
+
    
 
 
@@ -684,6 +688,9 @@ MYLOG("access done");
                                              getShmemPerfModel()->getElapsedTime(ShmemPerfModel::_USER_THREAD), update_replacement, isStruc) != NULL){
          stats.edge_L1hit_corresponding_prop_hit_L1++;                                       
                                              }
+         else {
+         stats.edge_L1hit_corresponding_prop_miss_L1++;   
+         }
 
 
          /* 
@@ -702,7 +709,7 @@ MYLOG("access done");
          }
          */
          }
-         else{
+         else{   // edge-data L1 miss 
          
 
             //IntPtr STRUC_ENTRY_SIZE = 4; // in bytes
@@ -721,6 +728,9 @@ MYLOG("access done");
                                              getShmemPerfModel()->getElapsedTime(ShmemPerfModel::_USER_THREAD), update_replacement, isStruc) != NULL){
             stats.edge_L1miss_corresponding_prop_hit_L1++;                                       
                                              }
+            else {
+            stats.edge_L1miss_corresponding_prop_miss_L1++;   
+            } 
             /*
             bool found = false;
             for (UInt32 j = 0; j < edge_L1miss_prop_address_list.size(); j++)

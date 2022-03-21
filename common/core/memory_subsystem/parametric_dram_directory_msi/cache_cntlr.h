@@ -269,7 +269,9 @@ namespace ParametricDramDirectoryMSI
            UInt64 Corresponding_prop_hit_L2;
            UInt64 Corresponding_prop_hit_L3;
            UInt64 edge_L1hit_corresponding_prop_hit_L1;
+           UInt64 edge_L1hit_corresponding_prop_miss_L1;
            UInt64 edge_L1miss_corresponding_prop_hit_L1;
+           UInt64 edge_L1miss_corresponding_prop_miss_L1;
 
 
            //..............................................................................
