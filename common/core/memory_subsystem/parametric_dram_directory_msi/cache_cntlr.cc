@@ -248,11 +248,13 @@ CacheCntlr::CacheCntlr(MemComponent::component_t mem_component,
    registerStatsMetric(name, core_id, "demand-store-misses-prop", &stats.demand_store_misses_prop);
    registerStatsMetric(name, core_id, "mshr-struc-latency", &stats.mshr_struc_latency);
    registerStatsMetric(name, core_id, "mshr-prop-latency", &stats.mshr_prop_latency);
-   registerStatsMetric(name, core_id, "Corresponding-prop-hit-L1", &stats.Corresponding_prop_hit_L1);
-   registerStatsMetric(name, core_id, "Corresponding-prop-hit-L2", &stats.Corresponding_prop_hit_L2);
-   registerStatsMetric(name, core_id, "Corresponding-prop-hit-L3", &stats.Corresponding_prop_hit_L3);
-   registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-hit-L3", &stats.edge_L1hit_corresponding_prop_hit_L1);
-   registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-hit-L3", &stats.edge_L1miss_corresponding_prop_hit_L1);
+   //registerStatsMetric(name, core_id, "Corresponding-prop-hit-L1", &stats.Corresponding_prop_hit_L1);
+  // registerStatsMetric(name, core_id, "Corresponding-prop-hit-L2", &stats.Corresponding_prop_hit_L2);
+   //registerStatsMetric(name, core_id, "Corresponding-prop-hit-L3", &stats.Corresponding_prop_hit_L3);
+   registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-hit-L1", &stats.edge_L1hit_corresponding_prop_hit_L1);
+   registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-hit-L2", &stats.edge_L1hit_corresponding_prop_hit_L2);
+   registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-hit-L3", &stats.edge_L1hit_corresponding_prop_hit_L3);
+   registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-hit-L1", &stats.edge_L1miss_corresponding_prop_hit_L1);
    
 
 
@@ -669,81 +671,111 @@ MYLOG("access done");
       if (struc){
          if(hit_where == HitWhere::where_t::L1_OWN) {   //L1 hit
             //IntPtr STRUC_ENTRY_SIZE = 4; // in bytes
-            IntPtr PROP_ENTRY_SIZE = 4;  // in bytes
+            //IntPtr PROP_ENTRY_SIZE = 4;  // in bytes
           //  uint64_t kBitsPerWord = 64;  //for applications other than BFS
 
-         UInt32 *addrp = (UInt32 *)(ca_address);
-         UInt32 struct_value = *addrp; 
+         UInt32 *addrp = (UInt32 *)(ca_address+offset);
+         UInt32 struc_value = *addrp; 
          //IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value/ kBitsPerWord) * PROP_ENTRY_SIZE);
-         IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value) * PROP_ENTRY_SIZE);
-         assert(getMemoryManager()->isPropertyCacheline(new_add));
-         IntPtr aligned_addr = new_add - (new_add % m_cache_block_size);
-         bool found = false;
-         for (UInt32 j = 0; j < edge_L1hit_prop_address_list.size(); j++)
-         {
-            if (aligned_addr == edge_L1hit_prop_address_list[j])
-            {
-               found = true;
-               break;
-            }
-         }
-         if (!found)
-         {
-            edge_L1hit_prop_address_list.push_back(aligned_addr);
-         }
+         //IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value) * PROP_ENTRY_SIZE);
+         //assert(getMemoryManager()->isPropertyCacheline(new_add));
+         //IntPtr aligned_addr = new_add - (new_add % m_cache_block_size);
+         //bool found = false;
+         //for (UInt32 j = 0; j < edge_L1hit_prop_address_list.size(); j++)
+         //{
+         //   if (aligned_addr == edge_L1hit_prop_address_list[j])
+         //   {
+         //      found = true;
+         //      break;
+         //   }
+         //}
+         //if (!found)
+         //{
+         struc_L1hit_edge_data_list.push_back({struc_value,1});
+         //}
          }
          else{
             //IntPtr STRUC_ENTRY_SIZE = 4; // in bytes
-            IntPtr PROP_ENTRY_SIZE = 4;  // in bytes
+            //IntPtr PROP_ENTRY_SIZE = 4;  // in bytes
             //uint64_t kBitsPerWord = 64;  //for applications other than BFS
 
-            UInt32 *addrp = (UInt32 *)(ca_address);
-            UInt32 struct_value = *addrp; 
+            UInt32 *addrp = (UInt32 *)(ca_address+offset);
+            UInt32 struc_value = *addrp; 
             //IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value/ kBitsPerWord) * PROP_ENTRY_SIZE);
-            IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value) * PROP_ENTRY_SIZE);
-            assert(getMemoryManager()->isPropertyCacheline(new_add));
-            IntPtr aligned_addr = new_add - (new_add % m_cache_block_size);
-            bool found = false;
-            for (UInt32 j = 0; j < edge_L1miss_prop_address_list.size(); j++)
-            {
-               if (aligned_addr == edge_L1miss_prop_address_list[j])
-               {
-                  found = true;
-                  break;
-               }
-            }
-            if (!found)
-            {
-               edge_L1miss_prop_address_list.push_back(aligned_addr);
+            //IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value) * PROP_ENTRY_SIZE);
+            //assert(getMemoryManager()->isPropertyCacheline(new_add));
+            //IntPtr aligned_addr = new_add - (new_add % m_cache_block_size);
+            //bool found = false;
+            //for (UInt32 j = 0; j < edge_L1miss_prop_address_list.size(); j++)
+            //{
+            //   if (aligned_addr == edge_L1miss_prop_address_list[j])
+            //   {
+            //      found = true;
+            //      break;
+            //   }
+            //}
+            //if (!found)
+            //{
+            struc_L1miss_edge_data_list.push_back({struc_value,1});
             }
          }
-      }
+      
 //.......................................... for property data access, update the required counter ...........................................
          
       else {
             if (prop){
+               IntPtr PROP_ENTRY_SIZE = 4;  // in bytes
+               UInt32 struc_data = ((ca_address+offset) - getMemoryManager()->propStart1)/4;  
                if (hit_where == HitWhere::where_t::L1_OWN)             //prop data hit in L1
                {
-                for (UInt32 j = 0; j < edge_L1hit_prop_address_list.size(); j++)   // we have to check in corresponding table
+                for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
                 {
-                   if ( ca_address == edge_L1hit_prop_address_list[j])
-                   {
+                   if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
+                   { 
                      stats.edge_L1hit_corresponding_prop_hit_L1++;
                     // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
-                     edge_L1hit_prop_address_list[j] = 0;
+                     struc_L1hit_edge_data_list[j].valid = 0;
                      break;
                    }
                 }
-                for (UInt32 j = 0; j < edge_L1miss_prop_address_list.size(); j++)   // we have to check in corresponding table
+               //  for (UInt32 j = 0; j < edge_L1miss_prop_address_list.size(); j++)   // we have to check in corresponding table
+               //  {
+               //     if ( ca_address == edge_L1miss_prop_address_list[j])
+               //     {
+               //       stats.edge_L1miss_corresponding_prop_hit_L1++;
+               //       edge_L1miss_prop_address_list[j] = 0;
+               //       break;
+               //     }
+               //  }
+               }
+               else if (hit_where == HitWhere::where_t::L2_OWN)             //prop data hit in L1
+               {
+                for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
                 {
-                   if ( ca_address == edge_L1miss_prop_address_list[j])
-                   {
-                     stats.edge_L1miss_corresponding_prop_hit_L1++;
-                     edge_L1miss_prop_address_list[j] = 0;
+                   if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
+                   { 
+                     stats.edge_L1hit_corresponding_prop_hit_L2++;
+                    // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
+                     struc_L1hit_edge_data_list[j].valid = 0;
                      break;
                    }
                 }
                }
+               else if (hit_where == HitWhere::where_t::L3_OWN)             //prop data hit in L1
+               {
+                for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
+                {
+                   if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
+                   { 
+                     stats.edge_L1hit_corresponding_prop_hit_L3++;
+                    // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
+                     struc_L1hit_edge_data_list[j].valid = 0;
+                     break;
+                   }
+                }
+               }
+
+
 
             }
          }

@@ -265,11 +265,15 @@ namespace ParametricDramDirectoryMSI
            UInt64 demand_stores_struc_misses_state[CacheState::NUM_CSTATE_STATES], demand_stores_prop_misses_state[CacheState::NUM_CSTATE_STATES];
            SubsecondTime mshr_prop_latency;
            SubsecondTime mshr_struc_latency;
-           UInt64 Corresponding_prop_hit_L1;
-           UInt64 Corresponding_prop_hit_L2;
-           UInt64 Corresponding_prop_hit_L3;
+           //......................................Vikash: Added stats.................................................................
+           //UInt64 Corresponding_prop_hit_L1;
+           //UInt64 Corresponding_prop_hit_L2;
+           //UInt64 Corresponding_prop_hit_L3;
            UInt64 edge_L1hit_corresponding_prop_hit_L1;
+           UInt64 edge_L1hit_corresponding_prop_hit_L2;
+           UInt64 edge_L1hit_corresponding_prop_hit_L3;
            UInt64 edge_L1miss_corresponding_prop_hit_L1;
+
 
 
            //..............................................................................
@@ -452,8 +456,14 @@ namespace ParametricDramDirectoryMSI
 
          friend class CacheCntlrList;
          friend class MemoryManager;
-         std::vector<IntPtr> edge_L1hit_prop_address_list;
-         std::vector<IntPtr> edge_L1miss_prop_address_list;
+         
+         struct single_element
+         {
+            UInt32 struc_data;
+            int valid;
+         };
+         std::vector<single_element> struc_L1hit_edge_data_list;
+         std::vector<single_element> struc_L1miss_edge_data_list;
    };
 
 }
