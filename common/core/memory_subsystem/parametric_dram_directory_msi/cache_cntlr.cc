@@ -736,7 +736,7 @@ MYLOG("access done");
                 {
                    if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
                    { 
-                     stats.edge_L1hit_corresponding_prop_hit_L1++;
+                     stats.edge_L1hit_corresponding_prop_hit_L1++;  //counter_1
                     // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
                      struc_L1hit_edge_data_list[j].valid = 0;
                      break;
@@ -746,7 +746,7 @@ MYLOG("access done");
                  {
                     if ( struc_data == struc_L1miss_edge_data_list[j].struc_data && struc_L1miss_edge_data_list[j].valid == 1)
                     {
-                      stats.edge_L1miss_corresponding_prop_hit_L1++;
+                      stats.edge_L1miss_corresponding_prop_hit_L1++; //counter_2
                      struc_L1miss_edge_data_list[j].valid = 0;
                       break;
                     }
@@ -758,7 +758,7 @@ MYLOG("access done");
                 {
                    if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
                    { 
-                     stats.edge_L1hit_corresponding_prop_hit_L2++;
+                     stats.edge_L1hit_corresponding_prop_hit_L2++;  //counter_3
                     // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
                      struc_L1hit_edge_data_list[j].valid = 0;
                      break;
@@ -768,7 +768,7 @@ MYLOG("access done");
                  {
                     if ( struc_data == struc_L1miss_edge_data_list[j].struc_data && struc_L1miss_edge_data_list[j].valid == 1)
                     {
-                      stats.edge_L1miss_corresponding_prop_hit_L2++;
+                      stats.edge_L1miss_corresponding_prop_hit_L2++; //counter_4
                      struc_L1miss_edge_data_list[j].valid = 0;
                       break;
                     }
@@ -780,7 +780,7 @@ MYLOG("access done");
                 {
                    if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
                    { 
-                     stats.edge_L1hit_corresponding_prop_hit_L3++;
+                     stats.edge_L1hit_corresponding_prop_hit_L3++; //counter_5
                     // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
                      struc_L1hit_edge_data_list[j].valid = 0;
                      break;
@@ -790,7 +790,7 @@ MYLOG("access done");
                  {
                     if ( struc_data == struc_L1miss_edge_data_list[j].struc_data && struc_L1miss_edge_data_list[j].valid == 1)
                     {
-                      stats.edge_L1miss_corresponding_prop_hit_L3++;
+                      stats.edge_L1miss_corresponding_prop_hit_L3++; //counter_6
                      struc_L1miss_edge_data_list[j].valid = 0;
                       break;
                     }
