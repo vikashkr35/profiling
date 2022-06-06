@@ -254,10 +254,16 @@ CacheCntlr::CacheCntlr(MemComponent::component_t mem_component,
    registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-hit-L1", &stats.edge_L1hit_corresponding_prop_hit_L1);
    registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-hit-L2", &stats.edge_L1hit_corresponding_prop_hit_L2);
    registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-hit-L3", &stats.edge_L1hit_corresponding_prop_hit_L3);
+   registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-miss-L1", &stats.edge_L1hit_corresponding_prop_miss_L1);
+   registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-miss-L2", &stats.edge_L1hit_corresponding_prop_miss_L2);
+   registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-miss-L3", &stats.edge_L1hit_corresponding_prop_miss_L3);
    registerStatsMetric(name, core_id, "edge-L1hit-corresponding-prop-hit-DRAM", &stats.edge_L1hit_corresponding_prop_hit_DRAM);
    registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-hit-L1", &stats.edge_L1miss_corresponding_prop_hit_L1);
    registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-hit-L2", &stats.edge_L1miss_corresponding_prop_hit_L2);
    registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-hit-L3", &stats.edge_L1miss_corresponding_prop_hit_L3);
+   registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-miss-L1", &stats.edge_L1miss_corresponding_prop_miss_L1);
+   registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-miss-L2", &stats.edge_L1miss_corresponding_prop_miss_L2);
+   registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-miss-L3", &stats.edge_L1miss_corresponding_prop_miss_L3);
    registerStatsMetric(name, core_id, "edge-L1miss-corresponding-prop-hit-LLC", &stats.edge_L1miss_corresponding_prop_hit_DRAM);
    
 
@@ -726,8 +732,10 @@ MYLOG("access done");
       
 //.......................................... for property data access, update the required counter ...........................................
          
-      else {
-            if (prop){
+      else 
+         {
+            if (prop)
+            {
                IntPtr PROP_ENTRY_SIZE = 4;  // in bytes
                UInt32 struc_data = ((ca_address+offset) - getMemoryManager()->propStart1)/4;  
                if (hit_where == HitWhere::where_t::L1_OWN)             //prop data hit in L1
@@ -736,89 +744,158 @@ MYLOG("access done");
                 {
                    if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
                    { 
-                     stats.edge_L1hit_corresponding_prop_hit_L1++;  //counter_1
+                     stats.edge_L1hit_corresponding_prop_hit_L1++;  //c1
                     // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
                      struc_L1hit_edge_data_list[j].valid = 0;
                      break;
                    }
                 }
+                //need edit
                  for (UInt32 j = 0; j < struc_L1miss_edge_data_list.size(); j++)   // we have to check in corresponding table
                  {
                     if ( struc_data == struc_L1miss_edge_data_list[j].struc_data && struc_L1miss_edge_data_list[j].valid == 1)
                     {
-                      stats.edge_L1miss_corresponding_prop_hit_L1++; //counter_2
+                      stats.edge_L1miss_corresponding_prop_hit_L1++; //c2
                      struc_L1miss_edge_data_list[j].valid = 0;
                       break;
                     }
                  }
                }
-               else if (hit_where == HitWhere::where_t::L2_OWN)             //prop data hit in L2
+               else 
                {
-                for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
-                {
+                  for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
+                  {
                    if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
                    { 
-                     stats.edge_L1hit_corresponding_prop_hit_L2++;  //counter_3
-                    // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
-                     struc_L1hit_edge_data_list[j].valid = 0;
+                     stats.edge_L1hit_corresponding_prop_miss_L1++;  //c7
+                     // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
+                     //struc_L1hit_edge_data_list[j].valid = 0;
                      break;
                    }
-                }
-                for (UInt32 j = 0; j < struc_L1miss_edge_data_list.size(); j++)   // we have to check in corresponding table
-                 {
+                  }
+                 for (UInt32 j = 0; j < struc_L1miss_edge_data_list.size(); j++)   // we have to check in corresponding table
+                  {
                     if ( struc_data == struc_L1miss_edge_data_list[j].struc_data && struc_L1miss_edge_data_list[j].valid == 1)
                     {
-                      stats.edge_L1miss_corresponding_prop_hit_L2++; //counter_4
-                     struc_L1miss_edge_data_list[j].valid = 0;
-                      break;
+                       stats.edge_L1miss_corresponding_prop_miss_L1++; //c8
+                       //struc_L1miss_edge_data_list[j].valid = 0;
+                       break;
                     }
-                 }
+                  }
+                                
+                  if (hit_where == HitWhere::where_t::L2_OWN)             //prop data hit in L2
+                  {
+                     for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
+                     {
+                        if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
+                        { 
+                           stats.edge_L1hit_corresponding_prop_hit_L2++; //c3
+                           // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
+                           struc_L1hit_edge_data_list[j].valid = 0;
+                           break;
+                        }
+                     }
+                     for (UInt32 j = 0; j < struc_L1miss_edge_data_list.size(); j++)   // we have to check in corresponding table
+                     {
+                        if ( struc_data == struc_L1miss_edge_data_list[j].struc_data && struc_L1miss_edge_data_list[j].valid == 1)
+                        {
+                           stats.edge_L1miss_corresponding_prop_hit_L2++; //c4
+                           struc_L1miss_edge_data_list[j].valid = 0;
+                           break;
+                        }
+                     }
+                  }
+                  else 
+                  {
+                     for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
+                     {
+                        if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
+                        { 
+                           stats.edge_L1hit_corresponding_prop_miss_L2++;  //c9
+                           // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
+                           //struc_L1hit_edge_data_list[j].valid = 0;
+                           break;
+                        }
+                     }
+                     for (UInt32 j = 0; j < struc_L1miss_edge_data_list.size(); j++)   // we have to check in corresponding table
+                     {
+                        if ( struc_data == struc_L1miss_edge_data_list[j].struc_data && struc_L1miss_edge_data_list[j].valid == 1)
+                        {
+                           stats.edge_L1miss_corresponding_prop_miss_L2++; //c10
+                           //struc_L1miss_edge_data_list[j].valid = 0;
+                           break;
+                        }
+                     }
+                                      
+                     if (hit_where == HitWhere::where_t::L3_OWN)             //prop data hit in LLLC
+                     {
+                        for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
+                        {
+                           if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
+                           { 
+                             stats.edge_L1hit_corresponding_prop_hit_L3++; //c5
+                            // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
+                             struc_L1hit_edge_data_list[j].valid = 0;
+                             break;
+                           }
+                        }
+                        for (UInt32 j = 0; j < struc_L1miss_edge_data_list.size(); j++)   // we have to check in corresponding table
+                        {
+                           if ( struc_data == struc_L1miss_edge_data_list[j].struc_data && struc_L1miss_edge_data_list[j].valid == 1)
+                           {
+                             stats.edge_L1miss_corresponding_prop_hit_L3++; //c6
+                             struc_L1miss_edge_data_list[j].valid = 0;
+                             break;
+                           }
+                        }
+                     }     
+                     else 
+                     {
+                        for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
+                        {
+                           if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
+                           { 
+                             stats.edge_L1hit_corresponding_prop_miss_L3++; //c11
+                            // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
+                             //struc_L1hit_edge_data_list[j].valid = 0;
+                             break;
+                           }
+                        }
+                        for (UInt32 j = 0; j < struc_L1miss_edge_data_list.size(); j++)   // we have to check in corresponding table
+                        {
+                           if ( struc_data == struc_L1miss_edge_data_list[j].struc_data && struc_L1miss_edge_data_list[j].valid == 1)
+                           {
+                             stats.edge_L1miss_corresponding_prop_miss_L3++; //c12
+                             //struc_L1miss_edge_data_list[j].valid = 0;
+                             break;
+                           }
+                        }
+                     
+                        if (hit_where == HitWhere::where_t::DRAM)             //prop data hit in DRAM
+                        {
+                         for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
+                         {
+                            if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
+                            { 
+                              stats.edge_L1hit_corresponding_prop_hit_DRAM++;
+                             // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
+                              struc_L1hit_edge_data_list[j].valid = 0;
+                              break;
+                            }
+                         }
+                         for (UInt32 j = 0; j < struc_L1miss_edge_data_list.size(); j++)   // we have to check in corresponding table
+                          {
+                             if ( struc_data == struc_L1miss_edge_data_list[j].struc_data && struc_L1miss_edge_data_list[j].valid == 1)
+                             {
+                               stats.edge_L1miss_corresponding_prop_hit_DRAM++;
+                              struc_L1miss_edge_data_list[j].valid = 0;
+                               break;
+                             }
+                          }
+                        }
+                     }
+                  }
                }
-               else if (hit_where == HitWhere::where_t::L3_OWN)             //prop data hit in LLLC
-               {
-                for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
-                {
-                   if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
-                   { 
-                     stats.edge_L1hit_corresponding_prop_hit_L3++; //counter_5
-                    // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
-                     struc_L1hit_edge_data_list[j].valid = 0;
-                     break;
-                   }
-                }
-                for (UInt32 j = 0; j < struc_L1miss_edge_data_list.size(); j++)   // we have to check in corresponding table
-                 {
-                    if ( struc_data == struc_L1miss_edge_data_list[j].struc_data && struc_L1miss_edge_data_list[j].valid == 1)
-                    {
-                      stats.edge_L1miss_corresponding_prop_hit_L3++; //counter_6
-                     struc_L1miss_edge_data_list[j].valid = 0;
-                      break;
-                    }
-                 }
-               }
-               else if (hit_where == HitWhere::where_t::DRAM)             //prop data hit in DRAM
-               {
-                for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
-                {
-                   if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
-                   { 
-                     stats.edge_L1hit_corresponding_prop_hit_DRAM++;
-                    // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);
-                     struc_L1hit_edge_data_list[j].valid = 0;
-                     break;
-                   }
-                }
-                for (UInt32 j = 0; j < struc_L1miss_edge_data_list.size(); j++)   // we have to check in corresponding table
-                 {
-                    if ( struc_data == struc_L1miss_edge_data_list[j].struc_data && struc_L1miss_edge_data_list[j].valid == 1)
-                    {
-                      stats.edge_L1miss_corresponding_prop_hit_DRAM++;
-                     struc_L1miss_edge_data_list[j].valid = 0;
-                      break;
-                    }
-                 }
-               }
-
 
             }
          }
