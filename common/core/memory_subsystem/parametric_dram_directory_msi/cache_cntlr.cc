@@ -11,6 +11,7 @@
 #include "shmem_perf.h"
 
 #include <cstring>
+const IntPtr PROP_ENTRY_SIZE = 4; // in bytes
 
 //define BYPASS_L2_LLC
 
@@ -679,15 +680,15 @@ MYLOG("access done");
       //..............................................vikash added ................................................................... 
       //.....................................................2 table for edge_L1hit_corresponding_prop_address_list , edge_L1miss_corresponding_prop_address_list
       if (struc){
-         if(hit_where == HitWhere::where_t::L1_OWN) {   //L1 hit
+         if(hit_where == HitWhere::L1_OWN) {   //L1 hit
             //IntPtr STRUC_ENTRY_SIZE = 4; // in bytes
             //IntPtr PROP_ENTRY_SIZE = 4;  // in bytes
           //  uint64_t kBitsPerWord = 64;  //for applications other than BFS
 
          UInt32 *addrp = (UInt32 *)(ca_address+offset);
-         UInt32 struc_value = *addrp; 
+         UInt32 edge_value = *addrp; 
          //IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value/ kBitsPerWord) * PROP_ENTRY_SIZE);
-         //IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value) * PROP_ENTRY_SIZE);
+         IntPtr prop_add = getMemoryManager()->propStart1 + ((edge_value) * PROP_ENTRY_SIZE);
          //assert(getMemoryManager()->isPropertyCacheline(new_add));
          //IntPtr aligned_addr = new_add - (new_add % m_cache_block_size);
          //bool found = false;
@@ -701,7 +702,9 @@ MYLOG("access done");
          //}
          //if (!found)
          //{
-         struc_L1hit_edge_data_list.push_back({struc_value,1});
+         // struc_L1hit_edge_data_list.push_back({struc_value,1});
+         struc_L1hit_edge_data_list.push_back(prop_add);
+         
          //}
          }
          else{
@@ -710,9 +713,9 @@ MYLOG("access done");
             //uint64_t kBitsPerWord = 64;  //for applications other than BFS
 
             UInt32 *addrp = (UInt32 *)(ca_address+offset);
-            UInt32 struc_value = *addrp; 
+            UInt32 edge_value = *addrp; 
             //IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value/ kBitsPerWord) * PROP_ENTRY_SIZE);
-            //IntPtr new_add = getMemoryManager()->propStart1 + ((struct_value) * PROP_ENTRY_SIZE);
+            IntPtr prop_add = getMemoryManager()->propStart1 + ((edge_value) * PROP_ENTRY_SIZE);
             //assert(getMemoryManager()->isPropertyCacheline(new_add));
             //IntPtr aligned_addr = new_add - (new_add % m_cache_block_size);
             //bool found = false;
@@ -726,7 +729,8 @@ MYLOG("access done");
             //}
             //if (!found)
             //{
-            struc_L1miss_edge_data_list.push_back({struc_value,1});
+            // struc_L1miss_edge_data_list.push_back({struc_value,1});
+            struc_L1miss_edge_data_list.push_back(prop_add);
             }
          }
       
@@ -736,13 +740,13 @@ MYLOG("access done");
          {
             if (prop)
             {
-               IntPtr PROP_ENTRY_SIZE = 4;  // in bytes
-               UInt32 struc_data = ((ca_address+offset) - getMemoryManager()->propStart1)/4;  
-               if (hit_where == HitWhere::where_t::L1_OWN)             //prop data hit in L1
+               //IntPtr PROP_ENTRY_SIZE = 4;  // in bytes
+               //UInt32 struc_data = ((ca_address+offset) - getMemoryManager()->propStart1)/4;  
+               if (hit_where == HitWhere::L1_OWN)             //prop data hit in L1
                {
                 for (UInt32 j = 0; j < struc_L1hit_edge_data_list.size(); j++)   // we have to check in corresponding table
                 {
-                   if (struc_data == struc_L1hit_edge_data_list[j].struc_data && struc_L1hit_edge_data_list[j].valid == 1 )
+                   if ((ca_address+offset) == struc_L1hit_edge_data_list[j] )
                    { 
                      stats.edge_L1hit_corresponding_prop_hit_L1++;  //c1
                     // printf ( "edge_L1hit_corresponding_prop_hit_L1: %x", stats.edge_L1hit_corresponding_prop_hit_L1);

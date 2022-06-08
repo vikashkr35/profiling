@@ -467,13 +467,16 @@ namespace ParametricDramDirectoryMSI
          friend class CacheCntlrList;
          friend class MemoryManager;
          
-         struct single_element
-         {
-            UInt32 struc_data;
-            int valid;
-         };
-         std::vector<single_element> struc_L1hit_edge_data_list;
-         std::vector<single_element> struc_L1miss_edge_data_list;
+         // struct single_element
+         // {
+         //    UInt32 struc_data;
+         //    int valid;
+         // };
+         // std::vector<single_element> struc_L1hit_edge_data_list;
+         // std::vector<single_element> struc_L1miss_edge_data_list;
+         std::vector<IntPtr> struc_L1hit_edge_data_list;
+         std::vector<IntPtr> struc_L1miss_edge_data_list;
+
    };
 
 }
